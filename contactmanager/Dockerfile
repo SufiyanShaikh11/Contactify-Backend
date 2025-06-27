@@ -1,15 +1,23 @@
-# Step 1: Use base image
+# Use base image
 FROM openjdk:17-jdk-slim
 
-# Step 2: Set working directory
+# Set working directory
 WORKDIR /app
 
-# Step 3: Copy pom and build dependencies
-COPY pom.xml ./
+# Copy Maven wrapper and pom.xml
+COPY mvnw .
+COPY mvnw.cmd .
+COPY .mvn .mvn
+
+# Copy project files
+COPY pom.xml .
 COPY src ./src
 
-# Step 4: Package the Spring Boot app
+# Give execution permission to mvnw
+RUN chmod +x mvnw
+
+# Package the Spring Boot app
 RUN ./mvnw package -DskipTests
 
-# Step 5: Run the app
+# Run the app
 CMD ["java", "-jar", "target/contactmanager-0.0.1-SNAPSHOT.jar"]
